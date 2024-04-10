@@ -78,7 +78,7 @@ def main():
     ns.dt = dt
     n = n_checkpoint = 0
     t = t_checkpoint = 0
-    t_out = 0.01
+    t_out = 0.05
     t_end = 0.25  # Only relevant when single physics case is run
     n_out = int(t_out / dt)
     n_t = int(t_end / dt)
