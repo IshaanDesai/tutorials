@@ -7,7 +7,7 @@ summary: This tutorial describes how to run a conjugate heat transfer simulation
 
 
 {% note %}
-Get the [case files of this tutorial](https://github.com/precice/tutorials/tree/master/heat-exchanger-simplified). Read how in the [tutorials introduction](https://www.precice.org/tutorials.html).
+Get the [case files of this tutorial](https://github.com/precice/tutorials/tree/master/heat-exchanger-simplified). Read how in the [tutorials introduction](https://precice.org/tutorials.html).
 {% endnote %}
 
 ## Setup
@@ -16,11 +16,17 @@ This tutorial extends the [flow over heated plate: Two meshes](https://precice.o
 
 Contrary to the [heat exchanger](https://precice.org/tutorials-heat-exchanger.html) tutorial, which defines Robin-Robin coupling, this case defines a Dirichlet-Neumann coupling, exchanging temperature (from the fluids to the solid) and heat flux (from the solid to the fluids). Additionally, instead of composing two explicit coupling schemes, this tutorial uses a fully-implicit multi-coupling scheme and is transient.
 
+## Configuration
+
+preCICE configuration (image generated using the [precice-config-visualizer](https://precice.org/tooling-config-visualization.html)):
+
+![preCICE configuration visualization](images/tutorials-heat-exchanger-simplified-precice-config.png)
+
 ## Available solvers
 
 Fluid participants:
 
-* OpenFOAM (buoyantPimpleFoam). For more information, have a look at the [OpenFOAM adapter documentation](https://www.precice.org/adapter-openfoam-overview.html).
+* OpenFOAM (buoyantPimpleFoam). For more information, have a look at the [OpenFOAM adapter documentation](https://precice.org/adapter-openfoam-overview.html).
 
 Solid participant:
 
