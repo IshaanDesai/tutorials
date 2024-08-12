@@ -6,7 +6,7 @@ from nutils import mesh, function, solver, export, cli
 import treelog
 import numpy as np
 import precice
-
+import csv
 
 def main():
     """
@@ -14,6 +14,7 @@ def main():
     The material consists of a mixture of two materials "g" and "s".
     """
     is_coupled_case = True  # If False, single-physics problem is solved
+    sim_type = "no-adaptivity"
 
     topo, geom = mesh.rectilinear([np.linspace(0, 1.0, 9), np.linspace(0, 0.5, 5)])
 
@@ -48,7 +49,7 @@ def main():
         couplingsample = topo.sample('gauss', degree=2)  # mesh vertices are Gauss points
         vertex_ids = participant.set_mesh_vertices(mesh_name, couplingsample.eval(ns.x))
     else:
-        sqrphi = topo.integral((ns.phi - phi) ** 2, degree=1)
+        sqrphi = topo.integral((ns.phi - phi) ** 2, degree=2)
         solphi = solver.optimize('solphi', sqrphi, droptol=1E-12)
 
         sqrk = topo.integral(((ns.k - k * np.eye(2)) * (ns.k - k * np.eye(2))).sum([0, 1]), degree=2)
@@ -148,11 +149,31 @@ def main():
                     x, phi, k, u = bezier.eval(['x_i', 'phi', 'k', 'u'] @ ns, solphi=solphi, solk=solk, solu=solu)
                     with treelog.add(treelog.DataLog()):
                         export.vtk('macro-' + str(n), bezier.tri, x, u=u, phi=phi, K=k)
+
+                    # Write CSV output
+                    fields = ['x', 'y', 'u', 'phi', 'k00', 'k01', 'k10', 'k11']
+                    with open(sim_type + str(n) + '.csv', mode='a') as file:
+                        writer = csv.writer(file)
+                        
+                        writer.writerow(fields)
+
+                        for i in range(0, len(x)):
+                            writer.writerow([x[i][0], x[i][1], u[i], phi[i], k[i][0][0], k[i][0][1], k[i][1][0], k[i][1][1]])
         else:
             if n % n_out == 0:
                 x, phi, k, u = bezier.eval(['x_i', 'phi', 'k', 'u'] @ ns, solphi=solphi, solk=solk, solu=solu)
                 with treelog.add(treelog.DataLog()):
                     export.vtk('macro-' + str(n), bezier.tri, x, u=u, phi=phi, K=k)
+                
+                # Write CSV output
+                fields = ['x', 'y', 'u', 'phi', 'k00', 'k01', 'k10', 'k11']
+                with open(sim_type + str(n) + '.csv', mode='a') as file:
+                    writer = csv.writer(file)
+
+                    writer.writerow(fields)
+
+                    for i in range(0, len(x)):
+                        writer.writerow([x[i][0], x[i][1], u[i], phi[i], k[i][0][0], k[i][0][1], k[i][1][0], k[i][1][1]])
 
             if n >= n_t:
                 is_coupling_ongoing = False
