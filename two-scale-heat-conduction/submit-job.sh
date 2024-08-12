@@ -29,14 +29,14 @@ echo "working directory="$SLURM_SUBMIT_DIR
 module load ipvs-epyc/gcc/10.2 ipvs-epyc/openmpi/4.0.4-gcc-10.2 ipvs-epyc/python/3.8.5 ub2004/libxml2/2.9.10 ub2004/boost/1.75.0
 #module list
 
-echo "Launching macro participant"
+echo "Launching Nutils macro solver"
 cd macro-nutils/
 mpiexec -n 1 --bind-to core python3 macro.py verbose=2 &> log_macro.log &
 
 cd ..
 
-echo "Launching micro manager"
+echo "Launching Micro Manager in parallel"
 cd micro-nutils/
-mpiexec -n 64 --bind-to core python3 run_micro_manager.py verbose=2 &> log_micro.log
+mpiexec -n 64 --bind-to core micro-manager-precice micro-manager-config.json verbose=2 &> log_micro.log
 
 echo "Simulation completed."
