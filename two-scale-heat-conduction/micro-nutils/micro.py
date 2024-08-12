@@ -43,7 +43,7 @@ class MicroSimulation:
         self._initial_condition_is_set = False
         self._k_nm1 = None  # Average effective conductivity of last time step
 
-    def initialize(self):
+    def initialize(self, initial_macro_data):
         # Define initial namespace
         self._ns = function.Namespace()
         self._ns.x = self._geom
@@ -70,6 +70,7 @@ class MicroSimulation:
 
         # Initialize phase field once more on refined topology
         solphi = self._get_analytical_phasefield(self._topo, self._ns, self._degree_phi, self._ns.lam, self._r_initial)
+        #solphi = self._solve_allen_cahn(self._topo, solphi, initial_macro_data["concentration"], 0.02)
 
         self._solphi = solphi  # Save solution of phi
         psi = self._get_avg_porosity(self._topo, solphi)

@@ -66,6 +66,7 @@ def main():
     solu0 = solver.optimize('solu', sqr)
 
     if is_coupled_case:
+        # Write initial concentration to preCICE
         if participant.requires_initial_data():
             concentrations = couplingsample.eval('u' @ ns, solu=solu0)
             participant.write_data(mesh_name, "concentration", vertex_ids, concentrations)

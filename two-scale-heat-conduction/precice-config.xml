@@ -74,7 +74,7 @@
       mesh="macro-mesh"
       from="macro-heat"
       to="Micro-Manager"
-      initialize="true" />
+      initialize="yes" />
     <relative-convergence-measure limit="1e-3" data="k_00" mesh="macro-mesh" />
     <relative-convergence-measure limit="1e-3" data="k_11" mesh="macro-mesh" />
     <relative-convergence-measure limit="1e-3" data="porosity" mesh="macro-mesh" />
