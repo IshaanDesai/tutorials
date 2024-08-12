@@ -37,6 +37,6 @@ cd ..
 
 echo "Launching Micro Manager in parallel"
 cd micro-nutils/
-mpiexec -n 64 --bind-to core micro-manager-precice micro-manager-config.json verbose=2 &> log_micro.log
+mpiexec -n 64 --bind-to core micro-manager-precice micro-manager-config.json &> log_micro.log
 
 echo "Simulation completed."
