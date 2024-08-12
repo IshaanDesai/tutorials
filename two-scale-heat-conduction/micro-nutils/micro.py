@@ -195,7 +195,7 @@ class MicroSimulation:
         """
         self._first_iter_done = True
         resphi = topo.integral('(lam^2 phibasis_n dphidt + gam phibasis_n ddwpdphi + gam lam^2 phibasis_n,i phi_,i + '
-                               '4 lam reacrate phibasis_n phi (1 - phi)) d:x' @ self._ns, degree=self._degree_phi * 2)
+                               '4 lam reacrate phibasis_n phi (1 - phi)) d:x' @ self._ns, degree=self._degree_phi * 4)
 
         args = dict(solphinm1=phi_coeffs_nm1, dt=dt, conc=concentration)
         phi_coeffs = solver.newton('solphi', resphi, lhs0=phi_coeffs_nm1, arguments=args).solve(tol=1E-12)
