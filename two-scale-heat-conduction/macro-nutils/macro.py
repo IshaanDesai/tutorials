@@ -110,7 +110,7 @@ def main():
             # Read porosity and apply it to the existing solution
             poro_data = participant.read_data(mesh_name, "porosity", vertex_ids, dt)
             poro_coupledata = couplingsample.asfunction(poro_data)
-            sqrphi = couplingsample.integral((ns.phi - poro_coupledata) ** 2)
+            sqrphi = couplingsample.integral((ns.phi - poro_coupledata) ** 2, degree=2)
             solphi = solver.optimize('solphi', sqrphi, droptol=1E-12)
 
             # Read conductivity and apply it to the existing solution
