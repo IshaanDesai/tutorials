@@ -20,6 +20,7 @@
 # Compute resources
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=65
+#SBATCH --exclusive
 
 echo "SLURM_NNODES"=$SLURM_NNODES
 echo "working directory="$SLURM_SUBMIT_DIR
