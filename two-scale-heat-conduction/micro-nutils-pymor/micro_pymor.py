@@ -1,4 +1,10 @@
-from pymor import Model, VectorArray, VectorOperator, ZeroOperator, IdentityOperator, NumpyVectorSpace, TimeStepper
+from pymor.algorithms.timestepping import TimeStepper
+from pymor.models.interface import Model, OutputDMuResult
+from pymor.operators.constructions import ConstantOperator, IdentityOperator, VectorOperator, ZeroOperator
+from pymor.vectorarrays.interface import VectorArray
+from pymor.vectorarrays.numpy import NumpyVectorSpace
+
+from micro import MicroSimulation
 
 class InstationaryModel(Model):
     """Generic class for models of instationary problems.
@@ -67,46 +73,73 @@ class InstationaryModel(Model):
         if isinstance(initial_data, VectorArray):
             assert initial_data in operator.source
             initial_data = VectorOperator(initial_data, name='initial_data')
-        mass = mass or IdentityOperator(operator.source)
-        rhs = rhs or ZeroOperator(operator.source, NumpyVectorSpace(1))
-        output_functional = output_functional or ZeroOperator(NumpyVectorSpace(0), operator.source)
+        # mass = mass or IdentityOperator(operator.source)
+        # rhs = rhs or ZeroOperator(operator.source, NumpyVectorSpace(1))
+        # output_functional = output_functional or ZeroOperator(NumpyVectorSpace(0), operator.source)
 
-        assert isinstance(time_stepper, TimeStepper)
-        assert initial_data.source.is_scalar
-        assert operator.source == initial_data.range
-        assert rhs.linear
-        assert rhs.range == operator.range
-        assert rhs.source.is_scalar
-        assert mass.linear
-        assert mass.source == mass.range
-        assert mass.source == operator.source
-        assert output_functional.source == operator.source
+        # assert isinstance(time_stepper, TimeStepper)
+        # assert initial_data.source.is_scalar
+        # assert operator.source == initial_data.range
+        # assert rhs.linear
+        # assert rhs.range == operator.range
+        # assert rhs.source.is_scalar
+        # assert mass.linear
+        # assert mass.source == mass.range
+        # assert mass.source == operator.source
+        # assert output_functional.source == operator.source
 
-        try:
-            dim_input = [op.parameters['input']
-                         for op in [operator, rhs, output_functional] if 'input' in op.parameters].pop()
-        except IndexError:
-            dim_input = 0
+        # try:
+        #     dim_input = [op.parameters['input']
+        #                  for op in [operator, rhs, output_functional] if 'input' in op.parameters].pop()
+        # except IndexError:
+        #     dim_input = 0
 
-        super().__init__(dim_input=dim_input, products=products, error_estimator=error_estimator,
-                         visualizer=visualizer, name=name)
+        # super().__init__(dim_input=dim_input, products=products, error_estimator=error_estimator,
+        #                  visualizer=visualizer, name=name)
 
         self.parameters_internal = dict(self.parameters_internal, t=1)
         self.__auto_init(locals())
-        self.solution_space = operator.source
-        self.linear = operator.linear and (output_functional is None or output_functional.linear)
-        self.dim_output = output_functional.range.dim
+        # self.solution_space = operator.source
+        # self.linear = operator.linear and (output_functional is None or output_functional.linear)
+        # self.dim_output = output_functional.range.dim
+
+        # Create Nutils micro simulation model object
+        self._nutils_model = MicroSimulation(0)
+
+        # Initialize the micro simulation model
+        self._initial_data = self._nutils_model.initialize()
 
     def _compute(self, quantities, data, mu=None):
         if 'solution' in quantities:
             mu = mu.with_(t=0.)
-            U0 = self.initial_data.as_range_array(mu)
-            U = self.time_stepper.solve(operator=self.operator,
-                                        rhs=None if isinstance(self.rhs, ZeroOperator) else self.rhs,
-                                        initial_data=U0,
-                                        mass=None if isinstance(self.mass, IdentityOperator) else self.mass,
-                                        initial_time=0, end_time=self.T, mu=mu, num_values=self.num_values)
+            # U0 = self.initial_data.as_range_array(mu)
+            U0 = self._initial_data
+
+            # U = self.time_stepper.solve(operator=self.operator,
+            #                             rhs=None if isinstance(self.rhs, ZeroOperator) else self.rhs,
+            #                             initial_data=U0,
+            #                             mass=None if isinstance(self.mass, IdentityOperator) else self.mass,
+            #                             initial_time=0, end_time=self.T, mu=mu, num_values=self.num_values)
+
+            U = self._nutils_model.solve(data, self.T)
             data['solution'] = U
             quantities.remove('solution')
 
         super()._compute(quantities, data, mu=mu)
+
+
+def main():
+    pymor_model = InstationaryModel(0, None, None, None)
+    dt = 1e-3
+
+    # input concentrations for the model
+    concentrations = VectorArray([0.5, 0.4, 0.3, 0.2])
+
+    pymor_model = InstationaryModel(dt, concentrations, None, None, name='nutils_micro')
+
+    input_data = dict()
+    input_data["concentration"] = 0.5
+    pymor_model.solve(input_data, dt)
+
+if __name__ == "__main__":
+    main()
