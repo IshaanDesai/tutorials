@@ -11,7 +11,7 @@
   <data:scalar name="porosity" />
   <data:scalar name="concentration" />
   <data:scalar name="micro_sim_time" />
-  <data:scalar name="grain_size" />
+  <!--data:scalar name="grain_size" /-->
   <data:scalar name="active_state" />
   <data:scalar name="active_steps" />
 
@@ -23,7 +23,7 @@
     <use-data name="porosity" />
     <use-data name="concentration" />
     <use-data name="micro_sim_time" />
-    <use-data name="grain_size" />
+    <!--use-data name="grain_size" /-->
     <use-data name="active_state" />
     <use-data name="active_steps" />
   </mesh>
@@ -46,8 +46,8 @@
     <write-data name="k_10" mesh="macro-mesh" />
     <write-data name="k_11" mesh="macro-mesh" />
     <write-data name="porosity" mesh="macro-mesh" />
-    <write-data name="micro_sim_time" mesh="macro-mesh" />
-    <write-data name="grain_size" mesh="macro-mesh" />
+    <!--write-data name="micro_sim_time" mesh="macro-mesh" /-->
+    <!--write-data name="grain_size" mesh="macro-mesh" /-->
     <write-data name="active_state" mesh="macro-mesh" />
     <write-data name="active_steps" mesh="macro-mesh" />
     <export:vtu directory="precice-exports" />

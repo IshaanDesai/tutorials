@@ -1,5 +1,5 @@
 {
-    "micro_file_name": "micro",
+    "micro_file_name": "micro_pymor",
     "coupling_params": {
             "participant_name": "Micro-Manager",
             "config_file_name": "../precice-config.xml",
@@ -21,9 +21,5 @@
         "every_implicit_iteration": "False",
         "similarity_measure": "L2rel"
       }
-    },
-    "diagnostics": {
-      "micro_output_n": 1,
-      "data_from_micro_sims": {"grain_size": "scalar"}
     }
 }

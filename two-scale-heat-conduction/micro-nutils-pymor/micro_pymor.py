@@ -7,13 +7,15 @@ from pymor.vectorarrays.interface import VectorArray
 from pymor.vectorarrays.block import BlockVectorSpace
 from pymor.vectorarrays.numpy import NumpyVectorSpace
 
-from micro import MicroSimulation
+from micro_nutils import NutilsMicroSimulation
+
+from copy import deepcopy
 
 class NutilsModel(Model):
 
     @classmethod
     def create(cls, dt, id):
-        nutils_model = MicroSimulation(id)
+        nutils_model = NutilsMicroSimulation(id)
         nutils_model.initialize()
         u, phi = nutils_model._solu, nutils_model._solphi
         u = NumpyVectorSpace.from_numpy(u)
@@ -56,10 +58,45 @@ class NutilsModel(Model):
         super()._compute(quantities, data, mu=mu)
 
 
+class MicroSimulation():
+
+    def __init__(self, sim_id):
+        self._sim_id = sim_id
+        self._state = None  # State of the micro simulation
+
+        self._pymor_model = NutilsModel.create(dt=1e-2, id=self._sim_id)
+
+        self._state = self._pymor_model.initial_data
+
+    def solve(self, macro_data, dt):
+        """
+        dt is not used because pyMOR cannot solve a model for a single time step.
+        """
+        data = self._pymor_model.with_(initial_data=self._state).compute(solution=True, output=True, mu=macro_data["concentration"])
+
+        output, self._state  = data['output'], data['solution']
+
+        output_data = dict()
+        output_data["k_00"] = output[0][0]
+        output_data["k_01"] = output[0][1]
+        output_data["k_10"] = output[0][2]
+        output_data["k_11"] = output[0][3]
+        output_data["porosity"] = output[0][4]
+
+        return output_data
+    
+    def get_state(self):
+        return deepcopy(self._state)
+
+    def set_state(self, state):
+        self._state = state
+
+
 def main():
     pymor_model = NutilsModel.create(dt=1e-3, id=0)
 
     U = pymor_model.initial_data
+
     for k in range(10):
         data = pymor_model.with_(initial_data=U).compute(solution=True, output=True, mu=0.4)
         output, U  = data['output'], data['solution']

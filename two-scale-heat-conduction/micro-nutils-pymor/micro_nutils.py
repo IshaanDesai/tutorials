@@ -11,7 +11,7 @@ import numpy as np
 from copy import deepcopy
 
 
-class MicroSimulation:
+class NutilsMicroSimulation:
 
     def __init__(self, sim_id):
         """
@@ -110,7 +110,7 @@ class MicroSimulation:
 
     @staticmethod
     def _get_analytical_phasefield(topo, ns, degree_phi, lam, r):
-        phi_ini = MicroSimulation._analytical_phasefield(ns.x[0], ns.x[1], r, lam)
+        phi_ini = NutilsMicroSimulation._analytical_phasefield(ns.x[0], ns.x[1], r, lam)
         sqrphi = topo.integral((ns.phi - phi_ini) ** 2, degree=degree_phi * 2)
         solphi = solver.optimize('solphi', sqrphi, droptol=1E-12)
 
