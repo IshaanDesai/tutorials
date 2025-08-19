@@ -10,7 +10,7 @@
     "simulation_params": {
       "micro_dt": 0.01,
       "macro_domain_bounds": [0.0, 1.0, 0.0, 0.5],
-      "decomposition": [8, 8],
+      "decomposition": [2, 1],
       "adaptivity": true,
       "adaptivity_settings": {
         "type": "global",
